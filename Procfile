@@ -1,1 +1,1 @@
-web: ./build/install/emojiphrases/bin/emojiphrases
+web: ./build/install/radiant-plains-90522/bin/radiant-plains-90522
