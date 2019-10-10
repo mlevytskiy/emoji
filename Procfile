@@ -1,1 +1,1 @@
-web: ./gradlew run
+web: ./build/install/emoji/bin/emoji
