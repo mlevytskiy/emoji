@@ -2,6 +2,8 @@ package com.example.repository
 
 import com.example.model.EmojiPhrases
 import com.example.model.Users
+import com.example.model.WumfUser
+import com.example.model.WumfUsers
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,7 @@ object DatabaseFactory {
         transaction {
             SchemaUtils.create(EmojiPhrases)
             SchemaUtils.create(Users)
+            SchemaUtils.create(WumfUsers)
         }
     }
 

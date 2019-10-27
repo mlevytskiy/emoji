@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.model.User
+import com.example.model.WumfUser
 import java.util.*
 
 class JwtService {
@@ -16,10 +17,10 @@ class JwtService {
         .withIssuer(issuer)
         .build()
 
-    fun generateToken(user: User): String = JWT.create()
+    fun generateToken(user: WumfUser): String = JWT.create()
         .withSubject("Authentication")
         .withIssuer(issuer)
-        .withClaim("id", user.userId)
+        .withClaim("id", user.telegramId)
         .withExpiresAt(expiresAt())
         .sign(algorithm)
 

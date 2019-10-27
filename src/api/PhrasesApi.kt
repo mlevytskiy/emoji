@@ -28,25 +28,25 @@ class PhrasesApi
 
 fun Route.phrasesApi(db: Repository) {
 
-    authenticate("jwt") {
-        get<PhrasesApi> {
-            val user = call.apiUser!!
-            call.respond(db.phrases(user.userId))
-        }
-
-        post<PhrasesApi> {
-            val user = call.apiUser!!
-            try {
-                val request = call.receive<PhrasesApiRequest>()
-                val phrase = db.add(user.userId, request.emoji, request.phrase)
-                phrase?.let {
-                    call.respond(phrase)
-                } ?:run {
-                    call.respondText("Invalid data received", status = HttpStatusCode.InternalServerError)
-                }
-            } catch (e: Throwable) {
-                call.respondText("Invalid data received", status = HttpStatusCode.BadRequest)
-            }
-        }
-    }
+//    authenticate("jwt") {
+//        get<PhrasesApi> {
+//            val user = call.apiUser!!
+//            call.respond(db.phrases(user.userId))
+//        }
+//
+//        post<PhrasesApi> {
+//            val user = call.apiUser!!
+//            try {
+//                val request = call.receive<PhrasesApiRequest>()
+//                val phrase = db.add(user.userId, request.emoji, request.phrase)
+//                phrase?.let {
+//                    call.respond(phrase)
+//                } ?:run {
+//                    call.respondText("Invalid data received", status = HttpStatusCode.InternalServerError)
+//                }
+//            } catch (e: Throwable) {
+//                call.respondText("Invalid data received", status = HttpStatusCode.BadRequest)
+//            }
+//        }
+//    }
 }

@@ -1,12 +1,10 @@
 package com.example
 
-import com.example.api.login
-import com.example.api.phrasesApi
+import com.example.api.*
 import com.example.model.EPSession
-import com.example.model.User
+import com.example.model.WumfUser
 import com.example.repository.DatabaseFactory
-import com.example.repository.EmojiPhrasesRepository
-import com.example.webapp.*
+import com.example.repository.WumfUsersRepository
 import com.fasterxml.jackson.databind.SerializationFeature
 import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.*
@@ -70,8 +68,10 @@ fun Application.module(testing: Boolean = false) {
 
     DatabaseFactory.init()
 
-    val db = EmojiPhrasesRepository()
+//    val db = EmojiPhrasesRepository()
+    val db2 = WumfUsersRepository()
     val jwtService = JwtService()
+    var user: WumfUser? = null
 
     install(Authentication) {
         jwt("jwt") {
@@ -81,7 +81,7 @@ fun Application.module(testing: Boolean = false) {
                 val payload = it.payload
                 val claim = payload.getClaim("id")
                 val claimString = claim.asString()
-                val user = db.userById(claimString)
+                user = db2.user(claimString)
                 user
             }
         }
@@ -91,16 +91,22 @@ fun Application.module(testing: Boolean = false) {
         static("static") {
             resources("images")
         }
-        home(db)
-        about(db)
-        phrases(db, hashFunction)
-        signin(db, hashFunction)
-        signout()
-        signup(db, hashFunction)
+//        home(db)
+//        about(db)
+//        phrases(db, hashFunction)
+//        signin(db, hashFunction)
+//        signout()
+//        signup(db, hashFunction)
 
         // API
-        login(db, jwtService)
-        phrasesApi(db)
+        login(db2, jwtService)
+        registration(db2, jwtService)
+        checkRegistration(db2)
+        addApp(db2)
+        removeApp(db2)
+        clearApps(db2)
+        getApps(db2)
+//        phrasesApi(db)
     }
 }
 
@@ -112,11 +118,11 @@ suspend fun ApplicationCall.redirect(location: Any) {
 
 fun ApplicationCall.refererHost() = request.header(HttpHeaders.Referrer)?.let { URI.create(it).host }
 
-fun ApplicationCall.securityCode(date: Long, user: User, hashFunction: (String) -> String) =
-    hashFunction("$date:${user.userId}:${request.host()}:${refererHost()}")
+fun ApplicationCall.securityCode(date: Long, user: WumfUser, hashFunction: (String) -> String) =
+    hashFunction("$date:${user.telegramId}:${request.host()}:${refererHost()}")
 
-fun ApplicationCall.verifyCode(date:Long, user: User, code:String, hashFunction: (String) -> String) =
+fun ApplicationCall.verifyCode(date:Long, user: WumfUser, code:String, hashFunction: (String) -> String) =
     securityCode(date, user, hashFunction) == code &&
             (System.currentTimeMillis() - date).let { it > 0 && it < TimeUnit.MILLISECONDS.convert(2, TimeUnit.HOURS) }
 
-val ApplicationCall.apiUser get() = authentication.principal<User>()
+val ApplicationCall.apiUser get() = authentication.principal<WumfUser>()
