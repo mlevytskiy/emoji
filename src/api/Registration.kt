@@ -10,6 +10,7 @@ import com.example.redirect
 import com.example.repository.Repository
 import com.example.repository.WumfRepository
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
 import io.ktor.locations.post
 import io.ktor.request.receive
@@ -35,7 +36,7 @@ fun Route.registration(db: WumfRepository, jwtService: JwtService) {
             val token = jwtService.generateToken(user)
             call.respond(RegistrationResponse(token))
         } else {
-            call.respondText{ "User already exist"}
+            call.respond(HttpStatusCode.NotAcceptable, "User already exist")
         }
     }
 }
