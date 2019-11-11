@@ -36,7 +36,7 @@ fun Route.registration(db: WumfRepository, jwtService: JwtService) {
             val token = jwtService.generateToken(user)
             call.respond(RegistrationResponse(token))
         } else {
-            call.respond(HttpStatusCode.NotAcceptable, "User already exist")
+            call.respond(HttpStatusCode.InternalServerError, "User already exist")
         }
     }
 }
