@@ -8,6 +8,7 @@ import com.example.redirect
 import com.example.repository.Repository
 import com.example.repository.WumfRepository
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
 import io.ktor.locations.post
 import io.ktor.request.receive
@@ -30,7 +31,7 @@ fun Route.login(db: WumfRepository, jwtService: JwtService) {
             val token = jwtService.generateToken(user)
             call.respond(LoginResponse(token))
         } else {
-            call.respondText("Invalid user")
+            call.respond(HttpStatusCode.InternalServerError,"Invalid user")
         }
     }
 }
