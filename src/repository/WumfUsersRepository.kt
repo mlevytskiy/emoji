@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class WumfUsersRepository: WumfRepository {
 
-    override suspend fun clearApps(userId: String) {
+    override suspend fun clearApps(userId: Int) {
         DatabaseFactory.dbQuery {
             WumfUsers.update({WumfUsers.id eq userId}) {
                 it[apps] = ""
@@ -17,14 +17,14 @@ class WumfUsersRepository: WumfRepository {
         }
     }
 
-    override suspend fun getApps(userId: String): String {
+    override suspend fun getApps(userId: Int): String {
         user(userId)?.let{
             return it.apps
         }
         return ""
     }
 
-    override suspend fun removeApp(userId: String, appStr: String): String {
+    override suspend fun removeApp(userId: Int, appStr: String): String {
         var result = ""
         withContext(Dispatchers.IO) {
             transaction {
@@ -43,7 +43,7 @@ class WumfUsersRepository: WumfRepository {
         return result
     }
 
-    override suspend fun addApp(userId: String, appStr: String): String {
+    override suspend fun addApp(userId: Int, appStr: String): String {
         var result = ""
         withContext(Dispatchers.IO) {
             transaction {
@@ -100,11 +100,12 @@ class WumfUsersRepository: WumfRepository {
             it[displayName] = user.displayName
             it[passwordHash] = user.passwordHash
             it[apps] = user.apps
+            it[country] = user.country
         }
         Unit
     }
 
-    override suspend fun user(userId: String, hash: String?): WumfUser? {
+    override suspend fun user(userId: Int, hash: String?): WumfUser? {
         val user = user(userId)
 
         return when {
@@ -115,7 +116,7 @@ class WumfUsersRepository: WumfRepository {
         }
     }
 
-    override suspend fun user(userId: String): WumfUser? = DatabaseFactory.dbQuery {
+    override suspend fun user(userId: Int): WumfUser? = DatabaseFactory.dbQuery {
         WumfUsers.select {
             (WumfUsers.id eq userId)
         }.mapNotNull { toUser(it) }
@@ -127,6 +128,7 @@ class WumfUsersRepository: WumfRepository {
             telegramId = row[WumfUsers.id],
             displayName = row[WumfUsers.displayName],
             passwordHash = row[WumfUsers.passwordHash],
-            apps = row[WumfUsers.apps]
+            apps = row[WumfUsers.apps],
+            country = row[WumfUsers.country]
         )
 }

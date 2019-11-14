@@ -31,7 +31,7 @@ fun Route.registration(db: WumfRepository, jwtService: JwtService) {
         var user = db.user(request.userId, hash(request.createdPasswordHash))
 
         if (user == null) {
-            user = WumfUser(request.userId, "SomeName", hash(request.createdPasswordHash))
+            user = WumfUser(request.userId, request.displayName, hash(request.createdPasswordHash), "", request.country)
             db.createUser(user)
             val token = jwtService.generateToken(user)
             call.respond(RegistrationResponse(token))

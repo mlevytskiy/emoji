@@ -40,6 +40,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
 
+    val countryUsers = HashMap<String, List<String>>()
+
     install(DefaultHeaders)
     install(StatusPages) {
         exception<Throwable> { e ->
@@ -66,7 +68,7 @@ fun Application.module(testing: Boolean = false) {
 
     val hashFunction = { s: String -> hash(s) }
 
-    DatabaseFactory.init()
+    DatabaseFactory.init(countryUsers)
 
 //    val db = EmojiPhrasesRepository()
     val db2 = WumfUsersRepository()
@@ -80,8 +82,8 @@ fun Application.module(testing: Boolean = false) {
             validate {
                 val payload = it.payload
                 val claim = payload.getClaim("id")
-                val claimString = claim.asString()
-                user = db2.user(claimString)
+                val claimInt = claim.asInt()
+                user = db2.user(claimInt)
                 user
             }
         }

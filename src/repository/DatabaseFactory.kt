@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
-    fun init() {
+    fun init(countryUsers: HashMap<String, List<String>>) {
         Database.connect(hikari())
 
         transaction {
