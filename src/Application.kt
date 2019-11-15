@@ -68,10 +68,10 @@ fun Application.module(testing: Boolean = false) {
 
     val hashFunction = { s: String -> hash(s) }
 
-    DatabaseFactory.init(countryUsers)
+    val db2 = WumfUsersRepository()
+    DatabaseFactory.init(countryUsers, db2)
 
 //    val db = EmojiPhrasesRepository()
-    val db2 = WumfUsersRepository()
     val jwtService = JwtService()
     var user: WumfUser? = null
 
@@ -108,6 +108,7 @@ fun Application.module(testing: Boolean = false) {
         removeApp(db2)
         clearApps(db2)
         getApps(db2)
+        getNotMyApps(db2, countryUsers)
 //        phrasesApi(db)
     }
 }

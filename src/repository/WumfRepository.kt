@@ -12,6 +12,7 @@ interface WumfRepository {
     suspend fun removeApp(userId: Int, appStr: String): String
     suspend fun clearApps(userId: Int)
     suspend fun getApps(userId: Int): String
+    suspend fun getAllUsers(): List<WumfUser>
 
 
 }

@@ -131,4 +131,8 @@ class WumfUsersRepository: WumfRepository {
             apps = row[WumfUsers.apps],
             country = row[WumfUsers.country]
         )
+
+    override suspend fun getAllUsers(): List<WumfUser> {
+        return WumfUsers.selectAll().mapNotNull { toUser(it) }
+    }
 }
