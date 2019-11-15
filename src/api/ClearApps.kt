@@ -18,7 +18,7 @@ fun Route.clearApps(db: WumfRepository) {
     authenticate("jwt") {
         post<ClearApps> {
             call.apiUser?.let {user ->
-                val appsStr = db.clearApps(user.telegramId)
+                val appsStr = db.clearApps(user)
                 call.respondText { "success" }
             }
         }

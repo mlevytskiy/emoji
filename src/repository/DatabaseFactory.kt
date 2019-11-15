@@ -16,7 +16,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
-    fun init(countryUsers: HashMap<String, List<String>>, repository: WumfRepository) {
+    fun init(countryUsers: HashMap<String, MutableList<WumfUser>>, repository: WumfRepository) {
         Database.connect(hikari())
 
         transaction {
@@ -24,10 +24,11 @@ object DatabaseFactory {
             SchemaUtils.create(Users)
             SchemaUtils.create(WumfUsers)
             runBlocking {
-                val isEmpty = repository.getAllUsers().isEmpty()
-                if (!isEmpty) {
-                    countryUsers.put("test", ArrayList<String>())
+                val users = repository.getAllUsers()
+                users.forEach {it
+                    countryUsers[it.country]?.plus(it)?:run{ countryUsers[it.country] = mutableListOf(it) }
                 }
+
             }
         }
     }

@@ -9,9 +9,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class WumfUsersRepository: WumfRepository {
 
-    override suspend fun clearApps(userId: Int) {
+    override suspend fun users(userIds: List<Int>): List<WumfUser> = DatabaseFactory.dbQuery {
+        WumfUsers.select { (WumfUsers.id inList userIds) }.map { toUser(it) }
+    }
+
+    override suspend fun clearApps(user: WumfUser) {
         DatabaseFactory.dbQuery {
-            WumfUsers.update({WumfUsers.id eq userId}) {
+            WumfUsers.update({WumfUsers.id eq user.telegramId}) {
                 it[apps] = ""
             }
         }
@@ -24,17 +28,17 @@ class WumfUsersRepository: WumfRepository {
         return ""
     }
 
-    override suspend fun removeApp(userId: Int, appStr: String): String {
+    override suspend fun removeApp(user: WumfUser, appStr: String): String {
         var result = ""
         withContext(Dispatchers.IO) {
             transaction {
                 val user = WumfUsers.select {
-                    (WumfUsers.id eq userId)
+                    (WumfUsers.id eq user.telegramId)
                 }.mapNotNull { toUser(it) }.singleOrNull()
                 user?.let {
                     val oldApps = it.apps
                     result = removeAppStr(oldApps, appStr)
-                    WumfUsers.update({WumfUsers.id eq userId}) {
+                    WumfUsers.update({WumfUsers.id eq user.telegramId}) {
                         it[apps] = result
                     }
                 }
@@ -43,17 +47,17 @@ class WumfUsersRepository: WumfRepository {
         return result
     }
 
-    override suspend fun addApp(userId: Int, appStr: String): String {
+    override suspend fun addApp(user: WumfUser, appStr: String): String {
         var result = ""
         withContext(Dispatchers.IO) {
             transaction {
                 val user = WumfUsers.select {
-                    (WumfUsers.id eq userId)
+                    (WumfUsers.id eq user.telegramId)
                 }.mapNotNull { toUser(it) }.singleOrNull()
                 user?.let {
                     val oldApps = it.apps
                     result = addAppStr(oldApps, appStr)
-                    WumfUsers.update({WumfUsers.id eq userId}) {
+                    WumfUsers.update({WumfUsers.id eq user.telegramId}) {
                         it[apps] = result
                     }
                 }

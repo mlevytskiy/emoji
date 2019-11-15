@@ -22,7 +22,7 @@ fun Route.removeApp(db: WumfRepository) {
         post<RemoveApp> {
             val request = call.receive<RemoveAppRequest>()
             call.apiUser?.let {user ->
-                val appsStr = db.removeApp(user.telegramId, request.app)
+                val appsStr = db.removeApp(user, request.app)
                 call.respond(AllAppsResponse(appsStr))
             }
         }

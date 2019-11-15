@@ -22,7 +22,7 @@ fun Route.addApp(db: WumfRepository) {
         post<AddApp> {
             val request = call.receive<AddAppRequest>()
             call.apiUser?.let {user ->
-                val appsStr = db.addApp(user.telegramId, request.app)
+                val appsStr = db.addApp(user, request.app)
                 call.respond(AllAppsResponse(appsStr))
             }
         }

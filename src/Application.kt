@@ -4,6 +4,8 @@ import com.example.api.*
 import com.example.model.EPSession
 import com.example.model.WumfUser
 import com.example.repository.DatabaseFactory
+import com.example.repository.InMemoryDecorator
+import com.example.repository.NotMyAppsRepository
 import com.example.repository.WumfUsersRepository
 import com.fasterxml.jackson.databind.SerializationFeature
 import freemarker.cache.ClassTemplateLoader
@@ -40,7 +42,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
 
-    val countryUsers = HashMap<String, List<String>>()
+    val countryUsers = HashMap<String, MutableList<WumfUser>>()
 
     install(DefaultHeaders)
     install(StatusPages) {
@@ -68,10 +70,10 @@ fun Application.module(testing: Boolean = false) {
 
     val hashFunction = { s: String -> hash(s) }
 
-    val db2 = WumfUsersRepository()
-    DatabaseFactory.init(countryUsers, db2)
+    val db = InMemoryDecorator(WumfUsersRepository(), countryUsers)
+    val inMemoryDB = db as NotMyAppsRepository
+    DatabaseFactory.init(countryUsers, db)
 
-//    val db = EmojiPhrasesRepository()
     val jwtService = JwtService()
     var user: WumfUser? = null
 
@@ -83,7 +85,7 @@ fun Application.module(testing: Boolean = false) {
                 val payload = it.payload
                 val claim = payload.getClaim("id")
                 val claimInt = claim.asInt()
-                user = db2.user(claimInt)
+                user = db.user(claimInt)
                 user
             }
         }
@@ -93,23 +95,16 @@ fun Application.module(testing: Boolean = false) {
         static("static") {
             resources("images")
         }
-//        home(db)
-//        about(db)
-//        phrases(db, hashFunction)
-//        signin(db, hashFunction)
-//        signout()
-//        signup(db, hashFunction)
 
         // API
-        login(db2, jwtService)
-        registration(db2, jwtService)
-        checkRegistration(db2)
-        addApp(db2)
-        removeApp(db2)
-        clearApps(db2)
-        getApps(db2)
-        getNotMyApps(db2, countryUsers)
-//        phrasesApi(db)
+        login(db, jwtService)
+        registration(db, jwtService)
+        checkRegistration(db)
+        addApp(db)
+        removeApp(db)
+        clearApps(db)
+        getApps(db)
+        getNotMyApps(inMemoryDB)
     }
 }
 

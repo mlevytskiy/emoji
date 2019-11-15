@@ -8,7 +8,7 @@ data class WumfUser (
     val telegramId: Int,
     val displayName: String,
     val passwordHash: String,
-    val apps : String = "",
+    var apps : String = "",
     val country: String) : Serializable, Principal {
 
 }

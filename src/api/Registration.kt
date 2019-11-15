@@ -1,13 +1,10 @@
 package com.example.api
 
-import com.example.API_VERSION
 import com.example.JwtService
 import com.example.api.request.RegistrationRequest
 import com.example.api.response.RegistrationResponse
 import com.example.hash
 import com.example.model.WumfUser
-import com.example.redirect
-import com.example.repository.Repository
 import com.example.repository.WumfRepository
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -15,9 +12,7 @@ import io.ktor.locations.Location
 import io.ktor.locations.post
 import io.ktor.request.receive
 import io.ktor.routing.Route
-import io.ktor.http.Parameters
 import io.ktor.response.respond
-import io.ktor.response.respondText
 
 const val REGISTRATION_ENDPOINT = "/registration"
 
