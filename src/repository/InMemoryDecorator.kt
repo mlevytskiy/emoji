@@ -80,21 +80,32 @@ class InMemoryDecorator(private val repository: WumfRepository,
     override suspend fun addApp(user: WumfUser, appStr: String): String {
         val apps = repository.addApp(user, appStr)
         val users = countryUsers[user.country]
-        for (i in 0 until (users?.size ?: 0)) {
-            if (users!![i].telegramId == user.telegramId) {
-                users[i].apps = apps
+        users?.let {
+            for (i in 0 until users.size) {
+                if (users[i].telegramId == user.telegramId) {
+                    users[i].apps = apps
+                }
             }
+        } ?:run {
+            user.apps = apps
+            countryUsers[user.country] = arrayListOf(user)
         }
+
         return apps
     }
 
     override suspend fun removeApp(user: WumfUser, appStr: String): String {
         val apps = repository.removeApp(user, appStr)
         val users = countryUsers[user.country]
-        for (i in 0 until (users?.size ?: 0)) {
-            if (users!![i].telegramId == user.telegramId) {
-                users[i].apps = apps
+        users?.let {
+            for (i in 0 until users.size) {
+                if (users[i].telegramId == user.telegramId) {
+                    users[i].apps = apps
+                }
             }
+        } ?:run {
+            user.apps = apps
+            countryUsers[user.country] = arrayListOf(user)
         }
         return apps
     }
