@@ -5,6 +5,11 @@ import com.example.model.WumfUser
 
 class InMemoryDecorator(private val repository: WumfRepository,
                         private val countryUsers: HashMap<String, MutableList<WumfUser>>) : WumfRepository, NotMyAppsRepository {
+
+    init {
+        System.out.println("InMemoryDecorator init")
+    }
+
     override suspend fun users(userIds: List<Int>): List<WumfUser> {
         return repository.users(userIds)
     }

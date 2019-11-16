@@ -24,10 +24,12 @@ object DatabaseFactory {
             SchemaUtils.create(Users)
             SchemaUtils.create(WumfUsers)
             runBlocking {
+                System.out.println("start fill countryUsers")
                 val users = repository.getAllUsers()
                 users.forEach {it
                     countryUsers[it.country]?.add(it)?:run{ countryUsers[it.country] = mutableListOf(it) }
                 }
+                System.out.println("countryUsers is Empty?" + countryUsers.isEmpty())
             }
         }
     }
