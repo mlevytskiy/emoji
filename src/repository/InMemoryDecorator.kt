@@ -10,7 +10,7 @@ class InMemoryDecorator(private val repository: WumfRepository,
     }
 
     override suspend fun getWorldApps(): List<App> {
-        val map = HashMap<String, List<Int>>()
+        val map = HashMap<String, MutableList<Int>>()
         for (i in countryUsers.entries) {
             if (i.value.isNullOrEmpty()) {
                 fillApps(i.value, map)
@@ -22,7 +22,7 @@ class InMemoryDecorator(private val repository: WumfRepository,
     override suspend fun getCountryApps(country: String): List<App> {
 
         countryUsers[country]?.let {
-            val map = HashMap<String, List<Int>>()
+            val map = HashMap<String, MutableList<Int>>()
             fillApps(it, map)
             return convertToApps(map)
         }
@@ -30,7 +30,7 @@ class InMemoryDecorator(private val repository: WumfRepository,
         return emptyList()
     }
 
-    private fun convertToApps(map: HashMap<String, List<Int>>): List<App> {
+    private fun convertToApps(map: HashMap<String, MutableList<Int>>): List<App> {
         val result = ArrayList<App>()
         map.entries.forEach {
             result.add(App(it.key, it.value))
@@ -38,13 +38,13 @@ class InMemoryDecorator(private val repository: WumfRepository,
         return result
     }
 
-    private fun fillApps(users: MutableList<WumfUser>, map: HashMap<String, List<Int>>) {
+    private fun fillApps(users: MutableList<WumfUser>, map: HashMap<String, MutableList<Int>>) {
         for (i in users) {
             fillApps(i, map)
         }
     }
 
-    private fun fillApps(user: WumfUser, map: HashMap<String, List<Int>>) {
+    private fun fillApps(user: WumfUser, map: HashMap<String, MutableList<Int>>) {
         val appsPackages =  user.apps.split(",")
         for (i in appsPackages) {
             map[i]?.plus(user.telegramId) ?:run {
@@ -55,7 +55,7 @@ class InMemoryDecorator(private val repository: WumfRepository,
 
     override suspend fun getAmongFriendsApps(friends: List<Int>): List<App> {
         val users = repository.users(friends)
-        val map = HashMap<String, List<Int>>()
+        val map = HashMap<String, MutableList<Int>>()
         users.forEach {
             fillApps(it, map)
         }

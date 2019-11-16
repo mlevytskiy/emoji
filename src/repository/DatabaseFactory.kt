@@ -26,9 +26,8 @@ object DatabaseFactory {
             runBlocking {
                 val users = repository.getAllUsers()
                 users.forEach {it
-                    countryUsers[it.country]?.plus(it)?:run{ countryUsers[it.country] = mutableListOf(it) }
+                    countryUsers[it.country]?.add(it)?:run{ countryUsers[it.country] = mutableListOf(it) }
                 }
-
             }
         }
     }
