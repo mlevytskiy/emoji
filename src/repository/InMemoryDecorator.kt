@@ -17,7 +17,7 @@ class InMemoryDecorator(private val repository: WumfRepository,
     override suspend fun getWorldApps(): List<App> {
         val map = HashMap<String, MutableList<Int>>()
         for (i in countryUsers.entries) {
-            if (i.value.isNullOrEmpty()) {
+            if (i.value.isNotEmpty()) {
                 fillApps(i.value, map)
             }
         }
