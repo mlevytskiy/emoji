@@ -49,11 +49,14 @@ class InMemoryDecorator(private val repository: WumfRepository,
         }
     }
 
-    private fun fillApps(user: WumfUser, map: HashMap<String, MutableList<Int>>) {
+    private fun fillApps(user: WumfUser, appsMap: HashMap<String, MutableList<Int>>) {
         val appsPackages =  user.apps.split(",")
         for (i in appsPackages) {
-            map[i]?.plus(user.telegramId) ?:run {
-                map[i] = arrayListOf(user.telegramId)
+            if (i.isEmpty()) {
+                continue
+            }
+            appsMap[i]?.add(user.telegramId) ?:run {
+                appsMap[i] = arrayListOf(user.telegramId)
             }
         }
     }
