@@ -20,27 +20,22 @@ const val GET_NOT_MY_APPS = "/getNotMyApps"
 class GetNotMyApps
 
 fun Route.getNotMyApps(inMemory: NotMyAppsRepository) {
-    authenticate("jwt") {
-        post<GetNotMyApps> {
-            val request = call.receive<NotMyAppsRequest>()
-            call.apiUser?.let {user ->
-                if (request.allWorld) {
-                    var apps: List<App>? = null
-                    if (request.allWorld) {
-                        apps = inMemory.getWorldApps()
-                    } else if (request.inCountry) {
-                        apps = inMemory.getCountryApps(request.country)
-                    } else if (request.amongFriends) {
-                        apps = inMemory.getAmongFriendsApps(request.friends)
-                    }
-                    apps?.let {
-                        call.respond(NotMyAppsResponse(it))
-                    } ?:run {
-                        call.respond(HttpStatusCode.InternalServerError, "Bad request")
-                    }
-                }
+    post<GetNotMyApps> {
+        val request = call.receive<NotMyAppsRequest>()
+        if (request.allWorld) {
+            var apps: List<App>? = null
+            if (request.allWorld) {
+                apps = inMemory.getWorldApps()
+            } else if (request.inCountry) {
+                apps = inMemory.getCountryApps(request.country)
+            } else if (request.amongFriends) {
+                apps = inMemory.getAmongFriendsApps(request.friends)
+            }
+            apps?.let {
+                call.respond(NotMyAppsResponse(it))
+            } ?: run {
+                call.respond(HttpStatusCode.InternalServerError, "Bad request")
             }
         }
     }
-
 }
