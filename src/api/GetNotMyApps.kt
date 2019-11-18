@@ -2,11 +2,9 @@ package com.example.api
 
 import com.example.api.request.NotMyAppsRequest
 import com.example.api.response.NotMyAppsResponse
-import com.example.apiUser
 import com.example.model.App
 import com.example.repository.NotMyAppsRepository
 import io.ktor.application.call
-import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
 import io.ktor.locations.post
@@ -22,7 +20,6 @@ class GetNotMyApps
 fun Route.getNotMyApps(inMemory: NotMyAppsRepository) {
     post<GetNotMyApps> {
         val request = call.receive<NotMyAppsRequest>()
-        if (request.allWorld) {
             var apps: List<App>? = null
             if (request.allWorld) {
                 apps = inMemory.getWorldApps()
@@ -36,6 +33,5 @@ fun Route.getNotMyApps(inMemory: NotMyAppsRepository) {
             } ?: run {
                 call.respond(HttpStatusCode.InternalServerError, "Bad request")
             }
-        }
     }
 }
