@@ -29,7 +29,8 @@ fun Route.registration(db: WumfRepository, jwtService: JwtService) {
             user = WumfUser(request.userId, request.displayName, hash(request.createdPasswordHash), "", request.country)
             db.createUser(user)
             val token = jwtService.generateToken(user)
-            call.respond(RegistrationResponse(token))
+            val friendListStr = jwtService.getFriendsList(request.friendsList, db)
+            call.respond(RegistrationResponse(token = token, friendsList = friendListStr))
         } else {
             call.respond(HttpStatusCode.InternalServerError, "User already exist")
         }

@@ -29,7 +29,8 @@ fun Route.login(db: WumfRepository, jwtService: JwtService) {
         val user = db.user(request.userId, hash(request.passwordHash))
         if (user != null) {
             val token = jwtService.generateToken(user)
-            call.respond(LoginResponse(token))
+            val friendListStr = jwtService.getFriendsList(request.friendsList, db)
+            call.respond(LoginResponse(token = token, friendsList = friendListStr))
         } else {
             call.respond(HttpStatusCode.InternalServerError,"Invalid user")
         }
