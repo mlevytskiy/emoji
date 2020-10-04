@@ -3,6 +3,7 @@ package com.example
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.example.api.response.Friend
 import com.example.model.User
 import com.example.model.WumfUser
 import com.example.repository.WumfRepository
@@ -25,7 +26,7 @@ class JwtService {
         .withExpiresAt(expiresAt())
         .sign(algorithm)
 
-    suspend fun getFriendsList(friendsListStr: String, db: WumfRepository): String {
+    suspend fun getFriendsList(friendsListStr: String, db: WumfRepository): List<Friend> {
         val contactsList = ArrayList<Int>()
         val users = ArrayList<WumfUser>()
         if (friendsListStr.isNotEmpty()) {
@@ -36,11 +37,12 @@ class JwtService {
             }
             users.addAll(db.users(userIds = contactsList))
         }
-        var friendListStr = ""
         if (users.isNotEmpty()) {
-            friendListStr=users.map { it.telegramId }.joinToString(separator = ",")
+            return users.map {
+                Friend(id = it.telegramId, apps = it.apps)
+            }
         }
-        return friendListStr
+        return emptyList()
     }
 
     private fun expiresAt() = Date(System.currentTimeMillis() + 3_600_000 * 24) //24 hour
