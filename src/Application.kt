@@ -104,6 +104,7 @@ fun Application.module(testing: Boolean = false) {
         removeApp(db)
         clearApps(db)
         getApps(db)
+        getFriends(db)
         getNotMyApps(inMemoryDB)
     }
 }

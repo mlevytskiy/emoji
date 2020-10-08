@@ -26,5 +26,4 @@ fun Route.getApps(db: WumfRepository) {
             }
         }
     }
-
 }
