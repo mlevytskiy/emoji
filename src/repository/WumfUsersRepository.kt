@@ -87,12 +87,20 @@ class WumfUsersRepository: WumfRepository {
     }
 
     private fun getAllApps(appsStr: String): MutableList<String> {
-        return appsStr.split(",").toMutableList()
+        if (appsStr.isEmpty()) {
+            return ArrayList()
+        } else if (!appsStr.contains(",")) {
+            return listOf(appsStr).toMutableList()
+        } else {
+            return appsStr.split(",").toMutableList()
+        }
     }
 
     private fun arrayToStr(list: List<String>): String {
         if (list.isEmpty()) {
             return ""
+        } else if (list.size == 1) {
+            return list.get(0)
         } else {
             return list.joinToString(separator=",")
         }
