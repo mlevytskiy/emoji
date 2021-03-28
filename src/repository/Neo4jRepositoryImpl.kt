@@ -102,16 +102,24 @@ class Neo4jRepositoryImpl : Neo4jRepository {
         query(App::class.java, queryStr, HashMap<String, String>()).toList()
     }
 
-    override suspend fun login(me: Long, myFriends: List<Long>): List<User> = transaction {
-        val usersStr = when {
-            myFriends.isEmpty() -> me.toString()
-            else -> me.toString() + "," + myFriends.joinToString(separator = ",")
-        }
+    override suspend fun login(me: Long, myFriends: List<Long>): List<User> {
+        val users = ArrayList(myFriends)
+        users.add(0, me)
+        return getUsers(users)
+    }
+
+    override suspend fun getUsers(users: List<Long>): List<User> = transaction {
         val query = "MATCH (user:User)\n" +
-                "WHERE user.id IN [$usersStr]\n" +
+                "WHERE user.id IN [${users.joinToString(",")}]\n" +
                 "OPTIONAL MATCH (user)-[rel]->(app:App)\n" +
                 "RETURN user, rel, app"
         query(User::class.java, query, HashMap<String, String>()).toList()
+    }
+
+    override suspend fun getWorldApps(): List<App> = transaction {
+        val query = "MATCH (app:App)<-[rel:HAS]-(user:User)\n" +
+                "RETURN app, rel, user"
+        query(App::class.java, query, HashMap<String, String>()).toList()
     }
 
     private fun <T> transaction(op: Session.() -> T) =

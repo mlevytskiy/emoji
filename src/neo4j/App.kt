@@ -1,9 +1,10 @@
 package com.example.neo4j
 
-import org.neo4j.ogm.annotation.GeneratedValue
-import org.neo4j.ogm.annotation.Id
-import org.neo4j.ogm.annotation.NodeEntity
-import org.neo4j.ogm.annotation.Properties
+import org.neo4j.ogm.annotation.*
 
 @NodeEntity("App")
-class App(@Id var packageName: String = "")
+class App(
+    @Id var packageName: String = "",
+    @Relationship(value = "HAS", direction = Relationship.INCOMING)
+    var users: List<User> = emptyList()
+)

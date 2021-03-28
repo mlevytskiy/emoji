@@ -96,9 +96,8 @@ fun Application.module(testing: Boolean = false) {
         checkRegistration(neo4jRepository)
         addApp(neo4jRepository)
         removeApp(neo4jRepository)
-        clearApps(db)
         getApps(neo4jRepository)
-        getFriends(db)
+        getFriends(neo4jRepository)
 //        getNotMyApps(inMemoryDB)
     }
 }

@@ -17,5 +17,8 @@ interface Neo4jRepository {
     suspend fun getApps(telegramId: Long): List<App>
 
     suspend fun login(me: Long, myFriends: List<Long>): List<User>
+    suspend fun getUsers(users: List<Long>): List<User>
+
+    suspend fun getWorldApps(): List<App>
 
 }
