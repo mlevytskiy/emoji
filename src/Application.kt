@@ -3,10 +3,7 @@ package com.example
 import com.example.api.*
 import com.example.model.EPSession
 import com.example.model.WumfUser
-import com.example.repository.DatabaseFactory
-import com.example.repository.InMemoryDecorator
-import com.example.repository.NotMyAppsRepository
-import com.example.repository.WumfUsersRepository
+import com.example.repository.*
 import com.fasterxml.jackson.databind.SerializationFeature
 import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.*
@@ -42,8 +39,6 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
 
-    val countryUsers = HashMap<String, MutableList<WumfUser>>()
-
     install(DefaultHeaders)
     install(StatusPages) {
         exception<Throwable> { e ->
@@ -68,11 +63,9 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    val hashFunction = { s: String -> hash(s) }
-
-    val db = InMemoryDecorator(WumfUsersRepository(), countryUsers)
-    val inMemoryDB = db as NotMyAppsRepository
-    DatabaseFactory.init(countryUsers, db)
+    val db = WumfUsersRepository()
+    val neo4jRepository = Neo4jRepositoryImpl()
+    DatabaseFactory.init()
 
     val jwtService = JwtService()
     var user: WumfUser? = null
@@ -97,15 +90,16 @@ fun Application.module(testing: Boolean = false) {
         }
 
         // API
-        login(db, jwtService)
-        registration(db, jwtService)
-        checkRegistration(db)
-        addApp(db)
-        removeApp(db)
+        login(neo4jRepository, jwtService, db)
+        registration(neo4jRepository, jwtService)
+        reg2(neo4jRepository, jwtService)
+        checkRegistration(neo4jRepository)
+        addApp(neo4jRepository)
+        removeApp(neo4jRepository)
         clearApps(db)
-        getApps(db)
+        getApps(neo4jRepository)
         getFriends(db)
-        getNotMyApps(inMemoryDB)
+//        getNotMyApps(inMemoryDB)
     }
 }
 

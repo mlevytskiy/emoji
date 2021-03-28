@@ -21,30 +21,11 @@ const val GET_FRIENDS_ENDPOINT = "/getFriends"
 class GetFriends
 
 fun Route.getFriends(db: WumfRepository) {
-    post<GetFriends> {
-        val request = call.receive<GetFriendsRequest>()
-        val users = db.users(request.userIds)
-        call.respond(GetFriendsResponse(users.map {
-            Friend(id = it.telegramId, apps = it.apps)
-        }))
-    }
-}
-
-//fun Route.getNotMyApps(inMemory: NotMyAppsRepository) {
-//    post<GetNotMyApps> {
-//        val request = call.receive<NotMyAppsRequest>()
-//        var apps: List<App>? = null
-//        if (request.allWorld) {
-//            apps = inMemory.getWorldApps()
-//        } else if (request.inCountry) {
-//            apps = inMemory.getCountryApps(request.country)
-//        } else if (request.amongFriends) {
-//            apps = inMemory.getAmongFriendsApps(request.friends)
-//        }
-//        apps?.let {
-//            call.respond(NotMyAppsResponse(it))
-//        } ?: run {
-//            call.respond(HttpStatusCode.InternalServerError, "Bad request")
-//        }
+//    post<GetFriends> {
+//        val request = call.receive<GetFriendsRequest>()
+//        val users = db.users(request.userIds)
+//        call.respond(GetFriendsResponse(users.map {
+//            Friend(id = it.telegramId.toLong(), apps = it.apps)
+//        }))
 //    }
-//}
+}

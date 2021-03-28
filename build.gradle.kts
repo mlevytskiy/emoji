@@ -37,6 +37,9 @@ dependencies {
     compile("org.postgresql:postgresql:+")
     compile("io.ktor:ktor-auth-jwt:$ktor_version")
     testCompile("io.ktor:ktor-server-tests:$ktor_version")
+    compile("com.natpryce:konfig:+")
+    compile("org.neo4j:neo4j-ogm-core:3.2.21")
+    runtime("org.neo4j:neo4j-ogm-bolt-driver:3.2.21")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")

@@ -1,36 +1,20 @@
 package com.example.repository
 
-import com.example.model.EmojiPhrases
-import com.example.model.Users
-import com.example.model.WumfUser
-import com.example.model.WumfUsers
+import com.example.model.*
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
-    fun init(countryUsers: HashMap<String, MutableList<WumfUser>>, repository: WumfRepository) {
+    fun init() {
         Database.connect(hikari())
-
         transaction {
-            SchemaUtils.create(EmojiPhrases)
-            SchemaUtils.create(Users)
             SchemaUtils.create(WumfUsers)
-            runBlocking {
-                System.out.println("start fill countryUsers")
-                val users = repository.getAllUsers()
-                users.forEach {it
-                    countryUsers[it.country]?.add(it)?:run{ countryUsers[it.country] = mutableListOf(it) }
-                }
-                System.out.println("countryUsers is Empty?" + countryUsers.isEmpty())
-            }
         }
     }
 

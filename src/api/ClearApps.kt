@@ -15,13 +15,12 @@ const val CLEAR_APPS_ENDPOINT = "/clearApps"
 class ClearApps
 
 fun Route.clearApps(db: WumfRepository) {
-    authenticate("jwt") {
-        post<ClearApps> {
-            call.apiUser?.let {user ->
-                val appsStr = db.clearApps(user)
-                call.respondText { "success" }
-            }
-        }
-    }
-
+//    authenticate("jwt") {
+//        post<ClearApps> {
+//            call.apiUser?.let {user ->
+//                val appsStr = db.clearApps(user)
+//                call.respondText { "success" }
+//            }
+//        }
+//    }
 }
