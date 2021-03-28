@@ -3,8 +3,11 @@ package com.example.api
 import com.example.JwtService
 import com.example.api.request.RegistrationRequest
 import com.example.api.response.RegistrationResponse
+import com.example.hash
+import com.example.model.WumfUser
 import com.example.neo4j.User
 import com.example.repository.Neo4jRepository
+import com.example.repository.WumfRepository
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
@@ -36,13 +39,14 @@ class Registration
 //    }
 //}
 
-fun Route.registration(db: Neo4jRepository, jwtService: JwtService) {
+fun Route.registration(db: Neo4jRepository, jwtService: JwtService, passwordDB: WumfRepository) {
     post<Registration> {
         val request = call.receive<RegistrationRequest>()
         val result = db.getUser(request.userId.toLong())
         if (result == null) {
+            passwordDB.createUser(WumfUser(request.userId, hash(request.createdPasswordHash)))
             val token = jwtService.generateToken(request.userId)
-            val user = User(id= request.userId.toLong(), displayName = request.displayName, country = "ua")
+            val user = User(id = request.userId.toLong(), displayName = request.displayName, country = "ua")
             db.createUser(user)
             call.respond(RegistrationResponse(token = token, friendsList = emptyList()))
         } else {

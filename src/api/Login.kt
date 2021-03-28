@@ -26,7 +26,7 @@ fun Route.login(db: Neo4jRepository, jwtService: JwtService, passwordDB: WumfRep
     post<Login> {
         val request = call.receive<LoginRequest>()
         val isPasswordCorrect = passwordDB.checkUser(request.userId, hash(request.passwordHash))
-        if (!isPasswordCorrect == null) {
+        if (!isPasswordCorrect) {
             call.respond(HttpStatusCode.InternalServerError,"Invalid user")
         } else {
             val friendsList = request.friendsList.split(",").map {

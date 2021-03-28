@@ -91,14 +91,14 @@ fun Application.module(testing: Boolean = false) {
 
         // API
         login(neo4jRepository, jwtService, db)
-        registration(neo4jRepository, jwtService)
+        registration(neo4jRepository, jwtService, db)
         reg2(neo4jRepository, jwtService)
         checkRegistration(neo4jRepository)
         addApp(neo4jRepository)
         removeApp(neo4jRepository)
         getApps(neo4jRepository)
         getFriends(neo4jRepository)
-//        getNotMyApps(inMemoryDB)
+        getNotMyApps(neo4jRepository)
     }
 }
 

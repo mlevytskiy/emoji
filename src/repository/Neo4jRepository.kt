@@ -20,5 +20,7 @@ interface Neo4jRepository {
     suspend fun getUsers(users: List<Long>): List<User>
 
     suspend fun getWorldApps(): List<App>
+    suspend fun getCountryApps(country: String): List<App>
+    suspend fun getFriendsApps(friends: List<Long>): List<App>
 
 }

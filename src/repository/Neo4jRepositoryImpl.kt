@@ -122,6 +122,20 @@ class Neo4jRepositoryImpl : Neo4jRepository {
         query(App::class.java, query, HashMap<String, String>()).toList()
     }
 
+    override suspend fun getCountryApps(country: String): List<App> = transaction {
+        val query = "MATCH (app:App)<-[rel:HAS]-(user:User{country: '$country'})\n" +
+                "RETURN app, rel, user"
+        query(App::class.java, query, HashMap<String, String>()).toList()
+    }
+
+    override suspend fun getFriendsApps(users: List<Long>): List<App> = transaction {
+        val query = "MATCH (user:User)\n" +
+                "WHERE user.id IN [${users.joinToString(",")}]\n" +
+                "OPTIONAL MATCH (user)-[rel]->(app:App)\n" +
+                "RETURN user, rel, app"
+        query(App::class.java, query, HashMap<String, String>()).toList()
+    }
+
     private fun <T> transaction(op: Session.() -> T) =
         datasource!!.op()
 
